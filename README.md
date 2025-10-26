@@ -15,6 +15,23 @@ Project LUMA is a full-stack web application built using the MERN stack (MongoDB
 - Set up MongoDB Atlas connection
 - Basic Express server configuration
 
+### Day 2: Authentication & Database Integration ✅
+- Implemented user authentication system:
+  - Set up JWT-based authentication
+  - Created registration and login routes
+  - Implemented password hashing with bcrypt
+- Configured MongoDB Atlas connection
+  - Set up environment variables
+  - Established database connection
+  - Prepared for user data storage
+- Created authentication routes:
+  - `/api/auth/register` for user registration
+  - `/api/auth/login` for user authentication
+- Added security features:
+  - Password encryption
+  - JWT token generation
+  - Environment variable configuration
+
 ## Project Structure
 ```
 project_luma/
@@ -67,15 +84,17 @@ cd ../client_frontend
 npm install
 ```
 
-4. Create a `.env` file in the server directory and add your MongoDB connection string:
+4. Create a `.env` file in the server directory and add your configuration:
 ```
 MONGODB_URI=your_mongodb_connection_string
+JWTSECRET=your_jwt_secret_key
+PORT=5000
 ```
 
 ## Development Status
 - [x] Day 1: Project Setup and Foundation
-- [ ] Day 2: TBD
-- [ ] Day 3: TBD
+- [x] Day 2: Authentication & Database Integration
+- [ ] Day 3: Frontend Integration (Pending)
 
 ## Contributing
 This is a development project by CodeKagete2060.
