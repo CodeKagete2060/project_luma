@@ -9,31 +9,53 @@ dotenv.config();
 
 // Register User
 router.post('/register', async (req, res) => {
-    // Request body now includes email and role
-    const { username, password, email, role } = req.body;
+    // Accept either `name` or `username` from the client
+    const { name, username, password, email, role } = req.body;
+
+    // Normalize incoming values
+    const finalUsername = name || username;
+    if (!finalUsername || !email || !password) {
+        return res.status(400).json({ msg: 'name, email and password are required' });
+    }
+
+    // map incoming role values to model enum values
+    const roleMap = {
+        student: 'Student',
+        parent: 'Parent',
+        tutor: 'Tutor',
+        admin: 'Admin'
+    };
+    const normalizedRole = role ? (roleMap[String(role).toLowerCase()] || 'Student') : 'Student';
 
     try {
-        const existingUser = await  User.findOne({ email });
+        const existingUser = await User.findOne({ email });
         // Checks for an existing user with the same email
-        if(existingUser) {
+        if (existingUser) {
             return res.status(400).json({ msg: 'User already exists' });
         }
-        // Converts "pass123" → "$2a$10$xyz...abc" (encrypted)
+
+        // Hash the password
         const hashedPassword = await bcrypt.hash(password, 10);
+
         // Creates a new user with hashed password
         const newUser = await User.create({
-            username,
+            username: finalUsername,
             email,
-            role,
-            password: hashedPassword
+            role: normalizedRole,
+            password: hashedPassword,
         });
-        // awaits saving of new user to database
+
+        // Save new user to database
         await newUser.save();
 
-        res.status(201).json({ msg: 'User registered successfully!!'});
+        res.status(201).json({ msg: 'User registered successfully' });
     } catch (err) {
-        console.error(err.message);
-        res.status(500).send('Server Error');
+        console.error('Register error:', err);
+        // Try to surface validation errors where possible
+        if (err.name === 'ValidationError') {
+            return res.status(400).json({ msg: err.message });
+        }
+        res.status(500).json({ msg: 'Server Error' });
     }
 });
 
@@ -66,7 +88,7 @@ router.post('/login', async (req, res) => {
             // Returns token and user details
             res.status(200).json({ 
                 token, 
-                user: { id: user.id, name: user.name, role: user.role }
+                user: { id: user.id, name: user.username, role: user.role }
             })
     } catch (err) {
         console.error(err.message);
