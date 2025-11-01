@@ -1,0 +1,122 @@
+You are an expert MERN stack developer and AI full-stack build agent.
+
+Build a full MERN stack platform called Project LUMA.
+
+LUMA is an education platform connecting a child's learning with parental involvement.
+
+🎯 MVP Core Features
+
+Role-based system: Student, Parent, Tutor
+
+Secure auth (JWT + hashed passwords)
+
+Responsive dashboards (ratio 2:8 sidebar:content)
+
+AI assignment helper (chat with step-by-step solutions)
+
+Study resources hub
+
+Parent progress tracking dashboard
+
+Notifications for student activity
+
+Live tutoring room (WebRTC) with optional AI companion
+
+Discussion board (student Q&A)
+
+Admin moderation dashboard
+
+Firebase or Socket.io for real-time features
+
+🎨 UI Requirements
+
+Fun for kids, professional for parents/tutors
+
+Smooth fade-in page transitions
+
+Intro page with parent + child learning smile background image
+
+Default theme colors:
+
+#121057
+
+#4b4b54
+
+#e8e8e8
+
+Sidebar navigation layout (2:8 ratio)
+
+📂 Structure
+/client (React + Vite)
+/server (Node + Express + MongoDB)
+/models /routes /controllers /middlewares
+
+📌 Tech
+
+React + Vite
+
+TailwindCSS
+
+Framer Motion animations
+
+MongoDB + Mongoose
+
+Socket.io / WebRTC (live help)
+
+JWT auth + bcrypt
+
+REST API
+
+📘 README Must Include
+
+Explanation of how platform supports UNSDG-4: Quality Education
+
+Setup & deployment instructions
+
+✅ Build Workflow Instructions
+
+Follow these steps — do NOT code all at once.
+
+Create MERN folder structure
+
+Install dependencies
+
+Build backend auth + roles
+
+Build protected routes + JWT
+
+Build MongoDB models
+
+Create dashboards UI
+
+Add AI homework assistant with fallback responses
+
+Add progress analytics
+
+Add live tutoring with AI assist toggle
+
+Style UI + animations
+
+Generate README.md
+
+Run & debug app
+
+At each step say:
+
+✅ Step complete. Shall I continue?
+
+Never skip steps.
+Never assume.
+Ask if unsure.
+
+When creating files use tree structure preview first, then generate code.
+
+🚨 Agent Rules
+
+Output code in modular structure
+
+Explain what you created each step
+
+Ask before moving to next phase
+
+Do not generate huge files at once — split into logical pieces
