@@ -82,7 +82,7 @@ export default function ResourceCard({ resource, onView, onLike, onRate }: Resou
           )}
           <div className="flex items-center gap-1">
             <span>{averageRating.toFixed(1)}</span>
-            <span>★</span>
+            <span>*</span>
             <span>({ratings.length})</span>
           </div>
           <div>
@@ -104,14 +104,13 @@ export default function ResourceCard({ resource, onView, onLike, onRate }: Resou
           <Eye className="w-4 h-4 mr-2" />
           View
         </Button>
-        <Button 
-          variant="outline" 
-          size="sm" 
+        <Button
+          variant="outline"
+          size="sm"
           className="flex-1"
           onClick={onLike}
           data-testid={`like-resource-${resource._id}`}
         >
-          <span className="mr-2">♥</span>
           Like
         </Button>
       </CardFooter>

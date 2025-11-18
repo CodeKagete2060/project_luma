@@ -4,7 +4,7 @@ Build a full MERN stack platform called Project LUMA.
 
 LUMA is an education platform connecting a child's learning with parental involvement.
 
-🎯 MVP Core Features
+MVP Core Features
 
 Role-based system: Student, Parent, Tutor
 
@@ -28,7 +28,7 @@ Admin moderation dashboard
 
 Firebase or Socket.io for real-time features
 
-🎨 UI Requirements
+UI Requirements
 
 Fun for kids, professional for parents/tutors
 
@@ -46,12 +46,12 @@ Default theme colors:
 
 Sidebar navigation layout (2:8 ratio)
 
-📂 Structure
+Structure
 /client (React + Vite)
 /server (Node + Express + MongoDB)
 /models /routes /controllers /middlewares
 
-📌 Tech
+Tech
 
 React + Vite
 
@@ -67,13 +67,13 @@ JWT auth + bcrypt
 
 REST API
 
-📘 README Must Include
+README Must Include
 
 Explanation of how platform supports UNSDG-4: Quality Education
 
 Setup & deployment instructions
 
-✅ Build Workflow Instructions
+Build Workflow Instructions
 
 Follow these steps — do NOT code all at once.
 
@@ -103,7 +103,7 @@ Run & debug app
 
 At each step say:
 
-✅ Step complete. Shall I continue?
+Step complete. Shall I continue?
 
 Never skip steps.
 Never assume.
@@ -111,7 +111,7 @@ Ask if unsure.
 
 When creating files use tree structure preview first, then generate code.
 
-🚨 Agent Rules
+Agent Rules
 
 Output code in modular structure
 

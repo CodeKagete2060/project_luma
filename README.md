@@ -23,7 +23,7 @@ By leveraging technology to bridge educational gaps, LUMA aims to make quality e
 
 ---
 
-## ✨ Features
+## Features
 
 ### 🔑 User Management
 - **Secure Authentication**: JWT-based authentication with bcrypt password hashing
@@ -62,7 +62,7 @@ By leveraging technology to bridge educational gaps, LUMA aims to make quality e
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 ### Backend
 - **Node.js** with Express.js
@@ -192,7 +192,7 @@ project_luma/
 
 ---
 
-## 🚀 API Endpoints
+## API Endpoints
 
 ### Authentication
 - `POST /api/auth/register` - Register new user
@@ -324,7 +324,7 @@ ISC
 
 ---
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - UNSDG 4 for inspiring quality education initiatives
 - The open-source community for amazing tools and libraries
@@ -332,4 +332,4 @@ ISC
 
 ---
 
-**Built with ❤️ for Quality Education**
+**Built for Quality Education**

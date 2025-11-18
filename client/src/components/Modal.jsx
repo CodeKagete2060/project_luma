@@ -13,7 +13,7 @@ export default function Modal({ open, title, onClose, children, size = 'md' }) {
       <div className={`relative bg-white rounded shadow p-4 w-full ${sizes[size]}`}>
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-lg font-semibold text-gray-800">{title}</h3>
-          <button onClick={onClose} className="text-gray-500 hover:text-gray-800">✕</button>
+          <button onClick={onClose} className="text-gray-500 hover:text-gray-800">×</button>
         </div>
         <div>{children}</div>
       </div>

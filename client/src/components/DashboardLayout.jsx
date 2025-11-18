@@ -19,36 +19,36 @@ export default function DashboardLayout({ children, role }) {
   // Role-specific navigation items
   const getNavItems = () => {
     const baseItems = [
-      { path: "/learning/resources", label: "📚 Resources", icon: "📚" },
-      { path: "/learning/assistant", label: "🤖 AI Assistant", icon: "🤖" },
-      { path: "/discussions", label: "💬 Discussions", icon: "💬" },
-      { path: "/search", label: "🔍 Smart Search", icon: "🔍" },
+      { path: "/learning/resources", label: "Resources", icon: "R" },
+      { path: "/learning/assistant", label: "AI Assistant", icon: "A" },
+      { path: "/discussions", label: "Discussions", icon: "D" },
+      { path: "/search", label: "Smart Search", icon: "S" },
     ];
 
     if (role === "student") {
       return [
-        { path: "/student-dashboard", label: "Dashboard", icon: "🏠" },
+        { path: "/student-dashboard", label: "Dashboard", icon: "H" },
         ...baseItems,
-        { path: "/learning/sessions", label: "📹 Sessions", icon: "📹" },
+        { path: "/learning/sessions", label: "Sessions", icon: "S" },
       ];
     } else if (role === "parent") {
       return [
-        { path: "/parent-dashboard", label: "Dashboard", icon: "🏠" },
+        { path: "/parent-dashboard", label: "Dashboard", icon: "H" },
         ...baseItems,
       ];
     } else if (role === "tutor") {
       return [
-        { path: "/tutor-dashboard", label: "Dashboard", icon: "🏠" },
+        { path: "/tutor-dashboard", label: "Dashboard", icon: "H" },
         ...baseItems,
-        { path: "/learning/sessions/start", label: "🎥 Start Session", icon: "🎥" },
-        { path: "/learning/sessions", label: "📹 Sessions", icon: "📹" },
+        { path: "/learning/sessions/start", label: "Start Session", icon: "S" },
+        { path: "/learning/sessions", label: "Sessions", icon: "S" },
       ];
     } else if (role === "admin") {
       return [
-        { path: "/admin-dashboard", label: "Dashboard", icon: "🏠" },
-        { path: "/admin/users", label: "👥 Users", icon: "👥" },
-        { path: "/admin/resources", label: "📚 Resources", icon: "📚" },
-        { path: "/admin/analytics", label: "📊 Analytics", icon: "📊" },
+        { path: "/admin-dashboard", label: "Dashboard", icon: "H" },
+        { path: "/admin/users", label: "Users", icon: "U" },
+        { path: "/admin/resources", label: "Resources", icon: "R" },
+        { path: "/admin/analytics", label: "Analytics", icon: "A" },
       ];
     }
     return [];
@@ -67,7 +67,7 @@ export default function DashboardLayout({ children, role }) {
                 onClick={() => setOpen((s) => !s)}
                 aria-label="Toggle menu"
               >
-                ☰
+                Menu
               </button>
               <Link to="/" className="font-bold text-white text-xl">
                 LUMA

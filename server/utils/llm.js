@@ -17,7 +17,7 @@ function rateLimit(userId, limit = 30) {
   return info.count <= limit;
 }
 
-// ✅ Real OpenAI integration (fallbacks to mock if missing)
+// Real OpenAI integration (fallbacks to mock if missing)
 async function queryOpenAI({ question }) {
   const client = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
@@ -44,7 +44,7 @@ async function queryOpenAI({ question }) {
   };
 }
 
-// 🧪 Mock fallback for local testing
+// Mock fallback for local testing
 async function mockLLM({ question }, meta = {}) {
   const answer = `Mocked answer: Here's how to think about "${question}"`;
   const steps = [

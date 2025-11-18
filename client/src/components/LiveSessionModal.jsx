@@ -38,16 +38,16 @@ export default function LiveSessionModal({ open, onClose, user, role }) {
       <div className="relative bg-white rounded shadow p-6 w-full max-w-lg">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold">Go Live</h3>
-          <button onClick={onClose} className="text-gray-500">✕</button>
+          <button onClick={onClose} className="text-gray-500">×</button>
         </div>
 
         {!session && (
           <div className="space-y-3">
             <div className="text-sm text-gray-600">Start a live session. Choose mode and click start.</div>
             <div className="flex gap-2">
-              <TaskButton onClick={() => startLive('video')}>🎥 Start Video</TaskButton>
-              <TaskButton variant="ghost" onClick={() => startLive('audio')}>🎧 Start Audio</TaskButton>
-              <TaskButton variant="neutral" onClick={() => startLive('chat')}>💬 Start Chat</TaskButton>
+              <TaskButton onClick={() => startLive('video')}>Start Video</TaskButton>
+              <TaskButton variant="ghost" onClick={() => startLive('audio')}>Start Audio</TaskButton>
+              <TaskButton variant="neutral" onClick={() => startLive('chat')}>Start Chat</TaskButton>
             </div>
           </div>
         )}

@@ -70,15 +70,15 @@ export default function NotificationBell({ userId }) {
   const getNotificationIcon = (type) => {
     switch (type) {
       case 'assignment_completed':
-        return '✅';
+        return '✓';
       case 'milestone_achieved':
-        return '🏆';
+        return 'M';
       case 'tutor_feedback':
-        return '📝';
+        return 'F';
       case 'new_assignment':
-        return '📚';
+        return 'A';
       default:
-        return '🔔';
+        return 'N';
     }
   };
 
