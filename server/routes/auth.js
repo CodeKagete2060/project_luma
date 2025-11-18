@@ -1,5 +1,5 @@
 const express = require('express');
-const dotenv =require('dotenv')
+const dotenv = require('dotenv');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user.js');
@@ -10,7 +10,7 @@ dotenv.config();
 // Register User
 router.post('/register', async (req, res) => {
     // Accept either `name` or `username` from the client
-    const { name, username, password, email, role } = req.body;
+    const { name, username, password, email, role, grade, subjects } = req.body;
 
     // Normalize incoming values
     const finalUsername = name || username;
@@ -26,6 +26,17 @@ router.post('/register', async (req, res) => {
         admin: 'Admin'
     };
     const normalizedRole = role ? (roleMap[String(role).toLowerCase()] || 'Student') : 'Student';
+    const normalizedGrade = normalizedRole === 'Student' ? grade : undefined;
+
+    if (normalizedRole === 'Student' && !normalizedGrade) {
+        return res.status(400).json({ msg: 'Grade is required for students' });
+    }
+
+    const normalizedSubjects = Array.isArray(subjects)
+        ? subjects
+        : typeof subjects === 'string' && subjects.length
+            ? subjects.split(',').map(s => s.trim()).filter(Boolean)
+            : [];
 
     try {
         const existingUser = await User.findOne({ email });
@@ -43,6 +54,7 @@ router.post('/register', async (req, res) => {
             email,
             role: normalizedRole,
             password: hashedPassword,
+            ...(normalizedRole === 'Student' && { grade: normalizedGrade, subjects: normalizedSubjects }),
         });
 
         // Save new user to database

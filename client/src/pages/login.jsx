@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import api from "../utils/axiosConfig";
 import { useNavigate, useLocation } from "react-router-dom";
 import { AuthCard, AuthInput, AuthButton, AuthError, AuthLink } from "../components/AuthComponents";
 import PageTransition from "../components/PageTransition";
@@ -26,7 +26,7 @@ export default function Login() {
     setIsLoading(true);
 
     try {
-      const res = await axios.post("http://localhost:5000/api/auth/login", form);
+      const res = await api.post("/auth/login", form);
       const { token, user } = res.data;
 
       // Normalize role to lowercase so client routing/guards match server values

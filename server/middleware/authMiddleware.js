@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken'); // Tool to read and verify tokens
 const dotenv = require('dotenv'); // Loads secret keys from .env file
 dotenv.config();
 
-export const verifyToken = (req, res, next) => {
+const verifyToken = (req, res, next) => {
     try {
     const token = req.header('Authorization')?.split(" ")[1];
     /****What's happening:**
@@ -26,3 +26,5 @@ export const verifyToken = (req, res, next) => {
         res.status(401).json({ msg: 'Invalid Token' });
     }
 }
+
+module.exports = verifyToken;

@@ -1,19 +1,14 @@
-import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 
 export default function PageTransition({ children }) {
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    setIsVisible(true);
-    return () => setIsVisible(false);
-  }, []);
-
   return (
-    <div
-      className={`transition-all duration-300 ease-in-out
-        ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -20 }}
+      transition={{ duration: 0.3, ease: "easeInOut" }}
     >
       {children}
-    </div>
+    </motion.div>
   );
 }

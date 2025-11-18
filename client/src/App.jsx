@@ -1,20 +1,30 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/login";
 import Register from "./pages/register";
+import Landing from "./pages/Landing";
 import ProtectedRoute from "./components/protectedRoute";
 import ErrorPage from "./components/ErrorPage";
 
 import StudentDashboard from "./pages/StudentDashboard";
 import ParentDashboard from "./pages/ParentDashboard";
 import TutorDashboard from "./pages/TutorDashboard";
+import AdminDashboard from "./pages/AdminDashboard";
+// Learning pages
+import AssignmentAssistant from "./components/AssignmentAssistant";
+import ResourcesHub from "./pages/learning/ResourcesHub";
+import StartSession from "./pages/learning/StartSession";
+import JoinSession from "./pages/learning/JoinSession";
+import RecordedSessions from "./pages/learning/RecordedSessions";
+// Discussion pages
+import Discussions from "./pages/Discussions";
+import DiscussionDetail from "./pages/DiscussionDetail";
+import NewDiscussion from "./pages/NewDiscussion";
+import SmartSearch from "./pages/SmartSearch";
 
 export default function App() {
-  // Quick debug log to confirm React render in browser console
-  if (typeof window !== 'undefined') console.log('App component rendering')
   return (
     <Routes>
-  {/* Redirect root to login */}
-  <Route path="/" element={<Navigate to="/login" replace />} />
+      <Route path="/" element={<Landing />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
 
@@ -43,6 +53,27 @@ export default function App() {
           </ProtectedRoute>
         }
       />
+      <Route
+        path="/admin-dashboard"
+        element={
+          <ProtectedRoute roles={["admin"]}>
+            <AdminDashboard />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Discussion Board */}
+      <Route path="/discussions" element={<ProtectedRoute roles={["student","tutor","parent","admin"]}><Discussions /></ProtectedRoute>} />
+      <Route path="/discussions/new" element={<ProtectedRoute roles={["student","tutor","parent","admin"]}><NewDiscussion /></ProtectedRoute>} />
+      <Route path="/discussions/:id" element={<ProtectedRoute roles={["student","tutor","parent","admin"]}><DiscussionDetail /></ProtectedRoute>} />
+      <Route path="/search" element={<ProtectedRoute roles={["student","tutor","parent","admin"]}><SmartSearch /></ProtectedRoute>} />
+
+      {/* Learning module */}
+      <Route path="/learning/assistant" element={<ProtectedRoute roles={["student","tutor","parent"]}><AssignmentAssistant /></ProtectedRoute>} />
+      <Route path="/learning/resources" element={<ProtectedRoute roles={["student","tutor","parent"]}><ResourcesHub /></ProtectedRoute>} />
+      <Route path="/learning/sessions/start" element={<ProtectedRoute roles={["tutor"]}><StartSession /></ProtectedRoute>} />
+      <Route path="/learning/sessions/join/:id" element={<ProtectedRoute roles={["student","tutor","parent"]}><JoinSession /></ProtectedRoute>} />
+      <Route path="/learning/sessions" element={<ProtectedRoute roles={["student","tutor","parent"]}><RecordedSessions /></ProtectedRoute>} />
 
       <Route 
         path="/unauthorized" 

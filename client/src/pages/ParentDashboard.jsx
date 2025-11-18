@@ -1,69 +1,146 @@
-import DashboardLayout from "../components/DashboardLayout";
+import React, { useEffect, useState } from 'react'
+import api from '../utils/axiosConfig'
+import DashboardLayout from '../components/DashboardLayout'
+import ProgressCard from '../components/ProgressCard'
+import TaskButton from '../components/TaskButton'
+import Modal from '../components/Modal'
+import NotificationPanel from '../components/NotificationPanel'
+import LiveSessionModal from '../components/LiveSessionModal'
+import ProgressChart from '../components/ProgressChart'
 
 export default function ParentDashboard() {
-  const dummy = {
-    child: { name: "Ava Johnson", grade: "Grade 7", avg: 82 },
-    recentReports: [
-      { title: "Math Progress", desc: "Improved test scores in algebra.", date: "2025-10-01" },
-      { title: "Reading", desc: "Needs more practice on comprehension.", date: "2025-10-12" },
-    ],
-    notifications: [
-      { from: "Mr. B", msg: "Scheduled extra help on Thursdays." },
-      { from: "Ms. A", msg: "Positive behavior in class." },
-    ],
-  };
+  const user = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user') || '{}')
+  const [children, setChildren] = useState([])
+  const [notifications, setNotifications] = useState([])
+  const [notifOpen, setNotifOpen] = useState(false)
+  const [selectedChild, setSelectedChild] = useState(null)
+  const [liveOpen, setLiveOpen] = useState(false)
+  const [childProgress, setChildProgress] = useState(null)
+
+  useEffect(() => {
+    const fetch = async () => {
+      try {
+        const res = await api.get('/users/children')
+        setChildren(res.data || [])
+      } catch (e) {
+        console.error('Error fetching children:', e)
+        setChildren([])
+      }
+      try {
+        const n = await api.get(`/notifications/${user.id || user._id}`)
+        setNotifications(n.data || [])
+      } catch (e) {
+        console.error('Error fetching notifications:', e)
+        setNotifications([])
+      }
+    }
+    fetch()
+  }, [user.id, user._id])
+
+  const fetchChildProgress = async (childId) => {
+    try {
+      const res = await api.get(`/progress/${childId}`)
+      setChildProgress(res.data)
+    } catch (e) {
+      console.error('Error fetching child progress:', e)
+    }
+  }
+
+  const avgProgress = children.length > 0
+    ? Math.round(children.reduce((sum, c) => sum + (c.progress?.averageScore || 0), 0) / children.length)
+    : 0
 
   return (
-    <DashboardLayout>
-      <div className="max-w-7xl mx-auto">
+    <DashboardLayout role="parent">
+      <div>
         <div className="flex items-center justify-between mb-6">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-800">Parent Dashboard</h1>
-            <p className="text-sm text-gray-500">Track your child's progress and recent teacher comments.</p>
+          <h1 className="text-3xl font-bold text-primary">Parent Dashboard</h1>
+          <div className="flex items-center gap-3">
+            <TaskButton onClick={() => setNotifOpen(true)}>Notifications ({notifications.filter(n => !n.read).length})</TaskButton>
           </div>
         </div>
 
-        <section className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-          <div className="bg-white p-4 rounded-lg shadow-sm">
-            <h3 className="text-sm text-gray-500">Child</h3>
-            <div className="mt-2">
-              <div className="text-lg font-semibold text-gray-800">{dummy.child.name}</div>
-              <div className="text-sm text-gray-500">{dummy.child.grade} • Avg: <span className="text-blue-600">{dummy.child.avg}%</span></div>
-              <button className="mt-3 px-3 py-1 bg-blue-600 text-white rounded" onClick={() => alert('View report (dummy)')}>
-                View Child's Report
-              </button>
-            </div>
-          </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          <ProgressCard title="Children" value={children.length} change="">Managed accounts</ProgressCard>
+          <ProgressCard title="Unread Notifications" value={notifications.filter(n => !n.read).length} change="">Recent notices</ProgressCard>
+          <ProgressCard title="Average Score" value={avgProgress ? `${avgProgress}%` : '—'} change="0%">Avg progress</ProgressCard>
+        </div>
 
-          <div className="md:col-span-2 bg-white p-4 rounded-lg shadow-sm">
-            <h3 className="text-lg font-semibold text-gray-800 mb-3">Notifications</h3>
-            <ul className="space-y-3">
-              {dummy.notifications.map((n, i) => (
-                <li key={i} className="p-3 border rounded">
-                  <div className="text-sm text-gray-700">{n.msg}</div>
-                  <div className="text-xs text-gray-400 mt-1">From: {n.from}</div>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </section>
-
-        <section className="bg-white p-4 rounded-lg shadow-sm">
-          <h3 className="text-lg font-semibold text-gray-800 mb-3">Recent Reports</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {dummy.recentReports.map((r, i) => (
-              <div key={i} className="p-3 border rounded">
-                <div className="text-sm font-semibold text-gray-800">{r.title}</div>
-                <div className="text-xs text-gray-500">{r.date}</div>
-                <div className="text-sm text-gray-700 mt-2">{r.desc}</div>
-                <button className="mt-3 px-2 py-1 text-sm bg-gray-100 rounded" onClick={() => alert('Open report (dummy)')}>
-                  Open
-                </button>
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <h3 className="text-xl font-semibold mb-4">My Children</h3>
+          <div className="grid gap-4">
+            {children.length === 0 && (
+              <div className="text-center py-8 text-gray-500">
+                <p>No children linked yet. Contact support to link your child's account.</p>
+              </div>
+            )}
+            {children.map(c => (
+              <div key={c._id || c.id} className="p-4 border rounded-lg flex items-center justify-between hover:shadow-md transition-shadow">
+                <div>
+                  <div className="font-medium text-gray-800 text-lg">{c.username || c.name}</div>
+                  <div className="text-sm text-gray-500 mt-1">Grade: {c.grade || 'N/A'}</div>
+                  <div className="text-sm text-gray-500">Completed: {c.progress?.completed || 0} assignments</div>
+                  <div className="text-sm text-gray-500">Average Score: {c.progress?.averageScore ? `${Math.round(c.progress.averageScore)}%` : 'N/A'}</div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <TaskButton variant="ghost" onClick={() => {
+                    setSelectedChild(c)
+                    fetchChildProgress(c._id || c.id)
+                  }}>View Progress</TaskButton>
+                </div>
               </div>
             ))}
           </div>
-        </section>
+        </div>
+
+        {notifOpen && (
+          <div className="fixed right-6 top-20 z-50">
+            <NotificationPanel notifications={notifications} onClose={() => setNotifOpen(false)} />
+          </div>
+        )}
+
+        <Modal open={!!selectedChild} title={`${selectedChild?.username || selectedChild?.name || 'Child'} Progress`} onClose={() => {
+          setSelectedChild(null)
+          setChildProgress(null)
+        }}>
+          {childProgress ? (
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <div className="text-sm text-gray-500">Assignments Completed</div>
+                  <div className="text-2xl font-bold text-primary">{childProgress.metrics?.assignmentsCompleted || 0}</div>
+                </div>
+                <div>
+                  <div className="text-sm text-gray-500">Average Score</div>
+                  <div className="text-2xl font-bold text-primary">{childProgress.metrics?.averageScore ? `${Math.round(childProgress.metrics.averageScore)}%` : 'N/A'}</div>
+                </div>
+                <div>
+                  <div className="text-sm text-gray-500">Total Time Spent</div>
+                  <div className="text-2xl font-bold text-primary">{childProgress.metrics?.totalTimeSpent || 0} min</div>
+                </div>
+              </div>
+              {childProgress.milestones && childProgress.milestones.length > 0 && (
+                <div>
+                  <div className="text-sm font-semibold mb-2">Recent Milestones</div>
+                  <div className="space-y-2">
+                    {childProgress.milestones.slice(-5).map((m, i) => (
+                      <div key={i} className="p-2 bg-light rounded">
+                        <div className="font-medium">{m.title}</div>
+                        <div className="text-sm text-gray-500">{new Date(m.achievedAt).toLocaleDateString()}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="text-sm text-gray-600">Loading progress data...</div>
+          )}
+        </Modal>
+
+        <LiveSessionModal open={liveOpen} onClose={() => setLiveOpen(false)} user={user} role="parent" />
       </div>
     </DashboardLayout>
-  );
+  )
 }
+

@@ -1,89 +1,172 @@
-import { useState } from "react";
-import DashboardLayout from "../components/DashboardLayout";
+import React, { useEffect, useState } from 'react'
+import api from '../utils/axiosConfig'
+import DashboardLayout from '../components/DashboardLayout'
+import ProgressCard from '../components/ProgressCard'
+import TaskButton from '../components/TaskButton'
+import Modal from '../components/Modal'
+import LiveSessionModal from '../components/LiveSessionModal'
 
 export default function TutorDashboard() {
-  const [task, setTask] = useState("");
-  const [tasks, setTasks] = useState([
-    { student: "Ava Johnson", title: "Algebra practice", due: "2025-10-30" },
-    { student: "Liam Smith", title: "Essay draft", due: "2025-11-02" },
-  ]);
+  const [students, setStudents] = useState([])
+  const [selectedStudent, setSelectedStudent] = useState(null)
+  const [assignOpen, setAssignOpen] = useState(false)
+  const [liveOpen, setLiveOpen] = useState(false)
+  const [newAssignment, setNewAssignment] = useState({ title: '', description: '', dueDate: '', studentId: '' })
 
-  const classStats = {
-    average: 79,
-    students: 24,
-  };
+  useEffect(() => {
+    const fetch = async () => {
+      try {
+        const res = await api.get('/users/tutor/students')
+        setStudents(res.data || [])
+      } catch (e) {
+        console.error('Error fetching students:', e)
+        setStudents([])
+      }
+    }
+    fetch()
+  }, [])
 
-  function addTask(e) {
-    e.preventDefault();
-    if (!task.trim()) return;
-    setTasks((t) => [{ student: "All", title: task, due: "TBD" }, ...t]);
-    setTask("");
+  const handleCreateAssignment = async () => {
+    try {
+      await api.post('/assignments', {
+        ...newAssignment,
+        dueDate: new Date(newAssignment.dueDate).toISOString()
+      })
+      alert('Assignment created successfully!')
+      setAssignOpen(false)
+      setNewAssignment({ title: '', description: '', dueDate: '', studentId: '' })
+    } catch (e) {
+      console.error('Error creating assignment:', e)
+      alert('Error creating assignment')
+    }
   }
 
+  const avgProgress = students.length > 0
+    ? Math.round(students.reduce((sum, s) => sum + (s.progress?.averageScore || 0), 0) / students.length)
+    : 0
+
   return (
-    <DashboardLayout>
-      <div className="max-w-7xl mx-auto">
+    <DashboardLayout role="tutor">
+      <div>
         <div className="flex items-center justify-between mb-6">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-800">Tutor Dashboard</h1>
-            <p className="text-sm text-gray-500">Overview of student progress and quick task assignment.</p>
+          <h1 className="text-3xl font-bold text-primary">Tutor Dashboard</h1>
+          <div className="flex items-center gap-3">
+            <TaskButton onClick={() => setAssignOpen(true)}>Assign Task</TaskButton>
+            <TaskButton onClick={() => setLiveOpen(true)}>Go Live</TaskButton>
           </div>
         </div>
 
-        <section className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-          <div className="bg-white p-4 rounded-lg shadow-sm">
-            <h3 className="text-sm text-gray-500">Class Average</h3>
-            <div className="text-3xl font-bold text-blue-600">{classStats.average}%</div>
-            <div className="text-xs text-gray-500 mt-1">{classStats.students} students</div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          <ProgressCard title="Students" value={students.length} change="">Assigned students</ProgressCard>
+          <ProgressCard title="Avg Progress" value={avgProgress ? `${avgProgress}%` : '—'} change="0%">Overview</ProgressCard>
+          <ProgressCard title="Active Sessions" value="0" change="">Live sessions</ProgressCard>
+        </div>
+
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <h3 className="text-xl font-semibold mb-4">My Students</h3>
+          <div className="grid gap-4">
+            {students.length === 0 && (
+              <div className="text-center py-8 text-gray-500">
+                <p>No students assigned yet. Contact admin to get students assigned to you.</p>
+              </div>
+            )}
+            {students.map(s => (
+              <div key={s._id || s.id} className="p-4 border rounded-lg flex items-center justify-between hover:shadow-md transition-shadow">
+                <div>
+                  <div className="font-medium text-gray-800 text-lg">{s.username || s.name}</div>
+                  <div className="text-sm text-gray-500 mt-1">Grade: {s.grade || 'N/A'}</div>
+                  <div className="text-sm text-gray-500">Completed: {s.progress?.completed || 0} assignments</div>
+                  <div className="text-sm text-gray-500">Average Score: {s.progress?.averageScore ? `${Math.round(s.progress.averageScore)}%` : 'N/A'}</div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <TaskButton variant="ghost" onClick={() => setSelectedStudent(s)}>View Progress</TaskButton>
+                  <TaskButton onClick={() => {
+                    setNewAssignment({ ...newAssignment, studentId: s._id || s.id })
+                    setAssignOpen(true)
+                  }}>Assign Task</TaskButton>
+                </div>
+              </div>
+            ))}
           </div>
+        </div>
 
-          <div className="md:col-span-2 bg-white p-4 rounded-lg shadow-sm">
-            <h3 className="text-lg font-semibold text-gray-800 mb-3">Assign Task</h3>
-            <form onSubmit={addTask} className="flex gap-2">
-              <input
-                value={task}
-                onChange={(e) => setTask(e.target.value)}
-                className="flex-1 p-2 border rounded"
-                placeholder="Task title or instructions"
-              />
-              <button className="px-3 py-1 bg-blue-600 text-white rounded">Assign</button>
-            </form>
-
-            <div className="mt-4">
-              <h4 className="text-sm text-gray-600 mb-2">Recent Assignments</h4>
-              <ul className="space-y-2">
-                {tasks.map((t, i) => (
-                  <li key={i} className="p-3 border rounded flex justify-between items-center">
-                    <div>
-                      <div className="text-sm font-semibold">{t.title}</div>
-                      <div className="text-xs text-gray-500">For: {t.student} • Due: {t.due}</div>
-                    </div>
-                    <button className="text-sm text-blue-600">Edit</button>
-                  </li>
+        <Modal open={assignOpen} title="Assign Task" onClose={() => {
+          setAssignOpen(false)
+          setNewAssignment({ title: '', description: '', dueDate: '', studentId: '' })
+        }}>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium mb-1">Student</label>
+              <select
+                className="w-full border p-2 rounded"
+                value={newAssignment.studentId}
+                onChange={(e) => setNewAssignment({ ...newAssignment, studentId: e.target.value })}
+              >
+                <option value="">Select student</option>
+                {students.map(s => (
+                  <option key={s._id || s.id} value={s._id || s.id}>{s.username || s.name}</option>
                 ))}
-              </ul>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Title</label>
+              <input
+                className="w-full border p-2 rounded"
+                placeholder="Assignment title"
+                value={newAssignment.title}
+                onChange={(e) => setNewAssignment({ ...newAssignment, title: e.target.value })}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Description</label>
+              <textarea
+                className="w-full border p-2 rounded"
+                rows={4}
+                placeholder="Assignment details"
+                value={newAssignment.description}
+                onChange={(e) => setNewAssignment({ ...newAssignment, description: e.target.value })}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Due Date</label>
+              <input
+                type="datetime-local"
+                className="w-full border p-2 rounded"
+                value={newAssignment.dueDate}
+                onChange={(e) => setNewAssignment({ ...newAssignment, dueDate: e.target.value })}
+              />
+            </div>
+            <div className="flex justify-end gap-2">
+              <TaskButton variant="ghost" onClick={() => {
+                setAssignOpen(false)
+                setNewAssignment({ title: '', description: '', dueDate: '', studentId: '' })
+              }}>Cancel</TaskButton>
+              <TaskButton onClick={handleCreateAssignment} disabled={!newAssignment.title || !newAssignment.description || !newAssignment.studentId || !newAssignment.dueDate}>
+                Create Assignment
+              </TaskButton>
             </div>
           </div>
-        </section>
+        </Modal>
 
-        <section className="bg-white p-4 rounded-lg shadow-sm">
-          <h3 className="text-lg font-semibold text-gray-800 mb-3">Analytics</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="p-3 border rounded">
-              <div className="text-sm text-gray-500">Top Performer</div>
-              <div className="text-lg font-semibold text-gray-800">Ava Johnson • 92%</div>
+        <Modal open={!!selectedStudent} title={`${selectedStudent?.username || selectedStudent?.name || 'Student'} Progress`} onClose={() => setSelectedStudent(null)}>
+          {selectedStudent && (
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <div className="text-sm text-gray-500">Assignments Completed</div>
+                  <div className="text-2xl font-bold text-primary">{selectedStudent.progress?.completed || 0}</div>
+                </div>
+                <div>
+                  <div className="text-sm text-gray-500">Average Score</div>
+                  <div className="text-2xl font-bold text-primary">{selectedStudent.progress?.averageScore ? `${Math.round(selectedStudent.progress.averageScore)}%` : 'N/A'}</div>
+                </div>
+              </div>
             </div>
-            <div className="p-3 border rounded">
-              <div className="text-sm text-gray-500">Needs Attention</div>
-              <div className="text-lg font-semibold text-gray-800">2 students</div>
-            </div>
-            <div className="p-3 border rounded">
-              <div className="text-sm text-gray-500">Avg Improvement</div>
-              <div className="text-lg font-semibold text-gray-800">+4%</div>
-            </div>
-          </div>
-        </section>
+          )}
+        </Modal>
+
+        <LiveSessionModal open={liveOpen} onClose={() => setLiveOpen(false)} user={JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user') || '{}')} role="tutor" />
       </div>
     </DashboardLayout>
-  );
+  )
 }
