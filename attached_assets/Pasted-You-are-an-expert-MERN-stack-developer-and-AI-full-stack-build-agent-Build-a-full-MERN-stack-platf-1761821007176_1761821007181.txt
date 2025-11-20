@@ -1,8 +1,8 @@
 You are an expert MERN stack developer and AI full-stack build agent.
 
-Build a full MERN stack platform called Project LUMA.
+Build a full MERN stack platform called Project G-LEARNEX.
 
-LUMA is an education platform connecting a child's learning with parental involvement.
+G-LEARNEX is an education platform connecting a child's learning with parental involvement.
 
 MVP Core Features
 

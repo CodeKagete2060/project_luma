@@ -1,4 +1,4 @@
-# Project LUMA - Design Guidelines
+# Project G-LEARNEX - Design Guidelines
 
 ## Design Approach
 **Reference-Based Approach** - Drawing inspiration from educational platforms like Khan Academy (playful learning interface) and professional productivity tools like Notion (clean parent/tutor dashboards). This dual-persona approach balances engagement for students with professionalism for adults.
