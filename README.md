@@ -479,4 +479,14 @@ ISC
 
 ---
 
+## 🚀 Live Demo
+
+**Frontend (User Interface):** [PASTE_YOUR_VERCEL_FRONTEND_URL_HERE]
+
+**Backend API:** [PASTE_YOUR_RENDER_BACKEND_URL_HERE]
+
+*Replace the placeholder URLs above with your actual deployed application links after deployment.*
+
+---
+
 **Built for Quality Education**
