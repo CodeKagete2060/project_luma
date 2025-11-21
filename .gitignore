@@ -1,8 +1,8 @@
-# Ignore environment files
-.env
-server/.env
-
-# Ignore node_modules
+# Root level ignores
 node_modules/
-server/node_modules/
-client_frontend/node_modules/
+.env
+.DS_Store
+
+# Let subdirectories handle their own ignores
+backend/.env
+frontend/.env
